@@ -28,6 +28,11 @@ import RestaurantLanguages from "./pages/restaurant/RestaurantLanguages";
 import RestaurantAppearance from "./pages/restaurant/RestaurantAppearance";
 import RestaurantSubscription from "./pages/restaurant/RestaurantSubscription";
 import RestaurantSettings from "./pages/restaurant/RestaurantSettings";
+import POSManagement from "./pages/restaurant/POSManagement";
+import POSServers from "./pages/restaurant/POSServers";
+import POSTables from "./pages/restaurant/POSTables";
+import POSTerminal from "./pages/restaurant/POSTerminal";
+import POSReports from "./pages/restaurant/POSReports";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +69,11 @@ const App = () => (
           <Route path="/restaurant/appearance" element={<RestaurantLayout><RestaurantAppearance /></RestaurantLayout>} />
           <Route path="/restaurant/subscription" element={<RestaurantLayout><RestaurantSubscription /></RestaurantLayout>} />
           <Route path="/restaurant/settings" element={<RestaurantLayout><RestaurantSettings /></RestaurantLayout>} />
+          <Route path="/restaurant/pos" element={<RestaurantLayout><POSManagement /></RestaurantLayout>} />
+          <Route path="/restaurant/pos/servers" element={<RestaurantLayout><POSServers /></RestaurantLayout>} />
+          <Route path="/restaurant/pos/tables" element={<RestaurantLayout><POSTables /></RestaurantLayout>} />
+          <Route path="/restaurant/pos/terminal" element={<RestaurantLayout><POSTerminal /></RestaurantLayout>} />
+          <Route path="/restaurant/pos/reports" element={<RestaurantLayout><POSReports /></RestaurantLayout>} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
