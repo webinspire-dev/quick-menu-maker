@@ -41,12 +41,12 @@ const HeroSection = () => {
               >
                 Create Free Account <ArrowRight className="w-5 h-5" />
               </button>
-              <button
-                onClick={() => scrollTo("how-it-works")}
+              <a
+                href="/demo"
                 className="bg-background border-2 border-border text-foreground px-8 py-4 rounded-xl text-base font-bold hover:bg-muted transition-all flex items-center justify-center gap-2"
               >
                 <Play className="w-5 h-5 text-primary" /> See Demo
-              </button>
+              </a>
             </div>
             <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
               {badges.map(({ icon: Icon, label }) => (
