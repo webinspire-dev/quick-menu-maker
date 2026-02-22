@@ -19,6 +19,10 @@ import {
   Search,
   LogOut,
   Crown,
+  Monitor,
+  Users,
+  Grid3X3,
+  FileBarChart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -39,6 +43,12 @@ const menuItems = [
   { title: "Appearance", url: "/restaurant/appearance", icon: Palette },
   { title: "Subscription", url: "/restaurant/subscription", icon: CreditCard },
   { title: "Settings", url: "/restaurant/settings", icon: Settings },
+  { title: "— POS —", url: "#", icon: Monitor, separator: true },
+  { title: "POS Terminals", url: "/restaurant/pos", icon: Monitor },
+  { title: "Servers / Staff", url: "/restaurant/pos/servers", icon: Users },
+  { title: "Tables", url: "/restaurant/pos/tables", icon: Grid3X3 },
+  { title: "POS Terminal", url: "/restaurant/pos/terminal", icon: Monitor },
+  { title: "POS Reports", url: "/restaurant/pos/reports", icon: FileBarChart },
 ];
 
 const planColors = {
@@ -85,9 +95,14 @@ export function RestaurantLayout({ children }: { children: React.ReactNode }) {
         <nav className="flex-1 py-3 space-y-0.5 px-2 overflow-y-auto">
           {menuItems.map((item) => {
             if (item.proOnly && plan === "Free") return null;
+            if ((item as any).separator) {
+              if (collapsed) return null;
+              return <p key={item.title} className="px-3 pt-4 pb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{item.title.replace(/—/g, "").trim()}</p>;
+            }
             const isActive =
-              location.pathname === item.url ||
-              (item.url !== "/restaurant" && location.pathname.startsWith(item.url));
+              item.url === "/restaurant"
+                ? location.pathname === "/restaurant"
+                : location.pathname.startsWith(item.url);
             return (
               <NavLink
                 key={item.url}
