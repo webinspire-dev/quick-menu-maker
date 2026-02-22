@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Plus, Minus, ShoppingBag, X, Check, ChevronRight, Star, Clock, Info, Heart, MapPin } from "lucide-react";
+import CheckoutModal from "@/components/demo/CheckoutModal";
 import { Link } from "react-router-dom";
 import demoCover from "@/assets/demo-cover.jpg";
 
@@ -104,6 +105,7 @@ const Demo = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const openProduct = (p: Product) => {
     setSelectedProduct(p);
@@ -446,12 +448,23 @@ const Demo = () => {
                       <span className="font-extrabold text-foreground text-lg">Total</span>
                       <span className="font-extrabold text-primary text-xl">{cartTotal.toFixed(2)} €</span>
                     </div>
-                    <button className="w-full gradient-warm text-primary-foreground py-4 rounded-2xl font-bold shadow-glow hover:opacity-90 transition-opacity">
-                      Commander (Démo)
+                    <button
+                      onClick={() => { setShowCart(false); setShowCheckout(true); }}
+                      className="w-full gradient-warm text-primary-foreground py-4 rounded-2xl font-bold shadow-glow hover:opacity-90 transition-opacity"
+                    >
+                      Commander · {cartTotal.toFixed(2)} €
                     </button>
                   </div>
                 )}
-              </div>
+
+      {/* Checkout modal */}
+      <CheckoutModal
+        open={showCheckout}
+        onClose={() => setShowCheckout(false)}
+        cart={cart}
+        total={cartTotal}
+      />
+    </div>
             </motion.div>
           </motion.div>
         )}
