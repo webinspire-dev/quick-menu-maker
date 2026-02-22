@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Plus, Minus, ShoppingBag, X, Check, ChevronRight } from "lucide-react";
+import { ArrowLeft, Plus, Minus, ShoppingBag, X, Check, ChevronRight, Star, Clock, Info, Heart, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
+import demoCover from "@/assets/demo-cover.jpg";
 
 type Supplement = { name: string; price: number };
 type SizeOption = { name: string; price: number };
@@ -143,22 +144,66 @@ const Demo = () => {
 
   return (
     <div className="min-h-screen bg-muted/30 max-w-md mx-auto relative">
-      {/* Header */}
-      <div className="sticky top-0 z-40 bg-background border-b border-border px-4 py-3">
-        <div className="flex items-center gap-3">
-          <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <div className="flex-1">
-            <h1 className="font-extrabold text-foreground text-lg">Istanbul Kebab 🔥</h1>
-            <p className="text-xs text-muted-foreground">Ouvert · Livraison 30min</p>
+      {/* Back button overlay */}
+      <div className="absolute top-3 left-3 z-20 flex items-center gap-2">
+        <Link to="/" className="w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-soft hover:bg-background transition-colors">
+          <ArrowLeft className="w-5 h-5 text-foreground" />
+        </Link>
+      </div>
+      <div className="absolute top-3 right-3 z-20">
+        <span className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded-full font-bold shadow-glow">DÉMO</span>
+      </div>
+
+      {/* Cover image */}
+      <div className="relative w-full h-48 overflow-hidden rounded-b-3xl">
+        <img src={demoCover} alt="Istanbul Kebab cover" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-foreground/30 to-transparent" />
+      </div>
+
+      {/* Restaurant info card */}
+      <div className="relative px-4 -mt-8 z-10 mb-2">
+        <div className="bg-card rounded-2xl shadow-card p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-14 h-14 rounded-2xl gradient-warm flex items-center justify-center text-2xl shadow-glow flex-shrink-0">
+              🔥
+            </div>
+            <div className="flex-1 min-w-0">
+              <h1 className="font-extrabold text-foreground text-xl">Istanbul Kebab</h1>
+              <p className="text-xs text-muted-foreground mt-0.5">Kebab, Burgers, Tacos, Boissons</p>
+              <div className="flex items-center gap-3 mt-2 flex-wrap">
+                <span className="flex items-center gap-1 text-xs font-semibold">
+                  <Star className="w-3.5 h-3.5 text-primary fill-primary" /> 4.8
+                  <span className="text-muted-foreground font-normal">(128)</span>
+                </span>
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <MapPin className="w-3.5 h-3.5" /> 1.2 km
+                </span>
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Clock className="w-3.5 h-3.5" /> 25-35 min
+                </span>
+              </div>
+            </div>
           </div>
-          <span className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded-full font-medium">DÉMO</span>
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-green-600" />
+              <span className="text-xs font-semibold text-green-600">Ouvert</span>
+              <span className="text-xs text-muted-foreground">· 11:00 - 23:00</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="flex items-center gap-1.5 border border-border rounded-full px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors">
+                <Info className="w-3.5 h-3.5" /> Plus d'infos
+              </button>
+              <button className="w-8 h-8 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors">
+                <Heart className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Category tabs */}
-      <div className="sticky top-[57px] z-30 bg-background border-b border-border">
+      <div className="sticky top-0 z-30 bg-background border-b border-border">
         <div className="flex overflow-x-auto gap-1 px-3 py-2 no-scrollbar">
           {menu.map((cat, i) => (
             <button
