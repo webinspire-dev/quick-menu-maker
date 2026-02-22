@@ -16,6 +16,18 @@ import AdminSupport from "./pages/admin/AdminSupport";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminLogs from "./pages/admin/AdminLogs";
 import AdminUsers from "./pages/admin/AdminUsers";
+import { RestaurantLayout } from "./components/restaurant/RestaurantLayout";
+import RestaurantDashboard from "./pages/restaurant/RestaurantDashboard";
+import RestaurantBranches from "./pages/restaurant/RestaurantBranches";
+import RestaurantCategories from "./pages/restaurant/RestaurantCategories";
+import RestaurantProducts from "./pages/restaurant/RestaurantProducts";
+import RestaurantOptions from "./pages/restaurant/RestaurantOptions";
+import RestaurantOrders from "./pages/restaurant/RestaurantOrders";
+import RestaurantAnalytics from "./pages/restaurant/RestaurantAnalytics";
+import RestaurantLanguages from "./pages/restaurant/RestaurantLanguages";
+import RestaurantAppearance from "./pages/restaurant/RestaurantAppearance";
+import RestaurantSubscription from "./pages/restaurant/RestaurantSubscription";
+import RestaurantSettings from "./pages/restaurant/RestaurantSettings";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +51,19 @@ const App = () => (
           <Route path="/admin/settings" element={<AdminLayout><AdminSettings /></AdminLayout>} />
           <Route path="/admin/logs" element={<AdminLayout><AdminLogs /></AdminLayout>} />
           <Route path="/admin/users" element={<AdminLayout><AdminUsers /></AdminLayout>} />
+
+          {/* Restaurant Owner Routes */}
+          <Route path="/restaurant" element={<RestaurantLayout><RestaurantDashboard /></RestaurantLayout>} />
+          <Route path="/restaurant/branches" element={<RestaurantLayout><RestaurantBranches /></RestaurantLayout>} />
+          <Route path="/restaurant/categories" element={<RestaurantLayout><RestaurantCategories /></RestaurantLayout>} />
+          <Route path="/restaurant/products" element={<RestaurantLayout><RestaurantProducts /></RestaurantLayout>} />
+          <Route path="/restaurant/options" element={<RestaurantLayout><RestaurantOptions /></RestaurantLayout>} />
+          <Route path="/restaurant/orders" element={<RestaurantLayout><RestaurantOrders /></RestaurantLayout>} />
+          <Route path="/restaurant/analytics" element={<RestaurantLayout><RestaurantAnalytics /></RestaurantLayout>} />
+          <Route path="/restaurant/languages" element={<RestaurantLayout><RestaurantLanguages /></RestaurantLayout>} />
+          <Route path="/restaurant/appearance" element={<RestaurantLayout><RestaurantAppearance /></RestaurantLayout>} />
+          <Route path="/restaurant/subscription" element={<RestaurantLayout><RestaurantSubscription /></RestaurantLayout>} />
+          <Route path="/restaurant/settings" element={<RestaurantLayout><RestaurantSettings /></RestaurantLayout>} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
