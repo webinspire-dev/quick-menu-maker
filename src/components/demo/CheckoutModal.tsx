@@ -51,6 +51,9 @@ const CheckoutModal = ({ open, onClose, cart, total }: Props) => {
     }
   };
 
+  const deliveryFee = 2.5;
+  const grandTotal = total + deliveryFee;
+
   const address = addressMode === "gps" ? gpsAddress : manualAddress;
   const isValid = name.trim() && phone.trim() && address.trim() && payment;
 
@@ -99,7 +102,7 @@ const CheckoutModal = ({ open, onClose, cart, total }: Props) => {
                 <h2 className="text-xl font-extrabold text-foreground">Commande confirmée ! 🎉</h2>
                 <p className="text-sm text-muted-foreground">
                   Merci <span className="font-semibold text-foreground">{name}</span>, votre commande de{" "}
-                  <span className="font-bold text-primary">{total.toFixed(2)} €</span> a été envoyée.
+                  <span className="font-bold text-primary">{grandTotal.toFixed(2)} €</span> a été envoyée.
                 </p>
                 <p className="text-xs text-muted-foreground">(Ceci est une démo — aucune commande réelle n'a été passée)</p>
                 <button
@@ -258,9 +261,19 @@ const CheckoutModal = ({ open, onClose, cart, total }: Props) => {
                       </span>
                     </div>
                   ))}
-                  <div className="border-t border-border pt-2 flex justify-between">
-                    <span className="font-extrabold text-foreground">Total</span>
-                    <span className="font-extrabold text-primary text-lg">{total.toFixed(2)} €</span>
+                  <div className="border-t border-border pt-2 space-y-1">
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Sous-total</span>
+                      <span className="font-semibold text-foreground">{total.toFixed(2)} €</span>
+                    </div>
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>🚚 Frais de livraison</span>
+                      <span className="font-semibold text-foreground">{deliveryFee.toFixed(2)} €</span>
+                    </div>
+                    <div className="border-t border-border pt-2 flex justify-between">
+                      <span className="font-extrabold text-foreground">Total</span>
+                      <span className="font-extrabold text-primary text-lg">{grandTotal.toFixed(2)} €</span>
+                    </div>
                   </div>
                 </div>
 
@@ -270,7 +283,7 @@ const CheckoutModal = ({ open, onClose, cart, total }: Props) => {
                   disabled={!isValid}
                   className="w-full gradient-warm text-primary-foreground py-4 rounded-2xl font-bold text-base shadow-glow hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Confirmer la commande · {total.toFixed(2)} €
+                  Confirmer la commande · {grandTotal.toFixed(2)} €
                 </button>
               </div>
             )}
