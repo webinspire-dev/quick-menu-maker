@@ -24,15 +24,38 @@ const products = [
   { id: 6, name: "French Fries", category: "Sides", price: "€4.50", status: "Active", featured: false, image: "🍟" },
 ];
 
-const optionGroups = [
+const allOptionGroups = [
   { name: "Size", type: "Required", options: ["Simple", "Big (+2€)", "Big Gratiné (+3.5€)"] },
   { name: "Extras", type: "Optional", options: ["Extra Cheese (+1€)", "Bacon (+1.5€)", "Avocado (+2€)"] },
+  { name: "Sauce", type: "Required", options: ["Ketchup", "Mayo", "BBQ (+0.50€)"] },
+  { name: "Cooking", type: "Optional", options: ["Rare", "Medium", "Well Done"] },
 ];
 
 export default function RestaurantProducts() {
   const [panelOpen, setPanelOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
+  const [attachedGroups, setAttachedGroups] = useState<typeof allOptionGroups>([]);
+  const [showGroupPicker, setShowGroupPicker] = useState(false);
+
+  const availableGroups = allOptionGroups.filter(
+    g => !attachedGroups.some(ag => ag.name === g.name)
+  );
+
+  const attachGroup = (group: typeof allOptionGroups[0]) => {
+    setAttachedGroups(prev => [...prev, group]);
+    setShowGroupPicker(false);
+  };
+
+  const detachGroup = (name: string) => {
+    setAttachedGroups(prev => prev.filter(g => g.name !== name));
+  };
+
+  const handleOpenPanel = () => {
+    setAttachedGroups([]);
+    setShowGroupPicker(false);
+    setPanelOpen(true);
+  };
 
   return (
     <div className="flex gap-0 h-[calc(100vh-7rem)]">
@@ -43,7 +66,7 @@ export default function RestaurantProducts() {
             <h1 className="text-2xl font-bold text-foreground">Products</h1>
             <p className="text-sm text-muted-foreground">{products.length} products in your menu</p>
           </div>
-          <Button onClick={() => setPanelOpen(true)} className="rounded-xl gap-2 gradient-warm text-primary-foreground border-0">
+          <Button onClick={handleOpenPanel} className="rounded-xl gap-2 gradient-warm text-primary-foreground border-0">
             <Plus className="w-4 h-4" /> Add Product
           </Button>
         </div>
@@ -210,16 +233,21 @@ export default function RestaurantProducts() {
             <div>
               <h3 className="text-sm font-bold text-foreground mb-3">Option Groups</h3>
               <div className="space-y-3">
-                {optionGroups.map((group) => (
+                {attachedGroups.map((group) => (
                   <div key={group.name} className="p-4 rounded-xl border bg-muted/30">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab" />
                         <span className="text-sm font-semibold text-foreground">{group.name}</span>
                       </div>
-                      <Badge className={cn("text-[10px] border-0", group.type === "Required" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground")}>
-                        {group.type}
-                      </Badge>
+                      <div className="flex items-center gap-1">
+                        <Badge className={cn("text-[10px] border-0", group.type === "Required" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground")}>
+                          {group.type}
+                        </Badge>
+                        <Button variant="ghost" size="icon" className="rounded-xl h-6 w-6" onClick={() => detachGroup(group.name)}>
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {group.options.map((opt) => (
@@ -230,9 +258,37 @@ export default function RestaurantProducts() {
                     </div>
                   </div>
                 ))}
-                <Button variant="outline" className="w-full rounded-xl text-sm gap-1.5">
-                  <Plus className="w-3.5 h-3.5" /> Attach Option Group
-                </Button>
+
+                {showGroupPicker ? (
+                  <div className="p-3 rounded-xl border space-y-2">
+                    <Label className="text-xs font-semibold">Select Option Group</Label>
+                    {availableGroups.length > 0 ? (
+                      <div className="space-y-1.5">
+                        {availableGroups.map((group) => (
+                          <button
+                            key={group.name}
+                            onClick={() => attachGroup(group)}
+                            className="w-full flex items-center justify-between p-2.5 rounded-xl bg-muted/50 hover:bg-muted transition-colors text-left"
+                          >
+                            <span className="text-sm font-medium text-foreground">{group.name}</span>
+                            <Badge className={cn("text-[10px] border-0", group.type === "Required" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground")}>
+                              {group.type}
+                            </Badge>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground py-2">All option groups are already attached.</p>
+                    )}
+                    <Button variant="ghost" size="sm" className="rounded-xl text-xs" onClick={() => setShowGroupPicker(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                ) : (
+                  <Button variant="outline" className="w-full rounded-xl text-sm gap-1.5" onClick={() => setShowGroupPicker(true)}>
+                    <Plus className="w-3.5 h-3.5" /> Attach Option Group
+                  </Button>
+                )}
               </div>
             </div>
 
