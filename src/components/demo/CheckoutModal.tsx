@@ -18,6 +18,19 @@ type Props = {
 
 type AddressMode = "gps" | "manual" | null;
 type PaymentMethod = "card" | "cod" | null;
+type DeliveryPricing = "tiers" | "per_km";
+
+// Restaurant delivery config (owner sets this)
+const deliveryConfig = {
+  mode: "tiers" as DeliveryPricing,
+  maxKm: 8,
+  perKmRate: 1.0, // €/km for per_km mode
+  tiers: [
+    { maxKm: 3, price: 2.0 },
+    { maxKm: 5, price: 3.5 },
+    { maxKm: 8, price: 5.0 },
+  ],
+};
 
 const orderSteps = [
   { icon: ThumbsUp, label: "Confirmée" },
@@ -39,6 +52,7 @@ const CheckoutModal = ({ open, onClose, cart, total }: Props) => {
   const [payment, setPayment] = useState<PaymentMethod>(null);
   const [submitted, setSubmitted] = useState(false);
   const [orderId] = useState(() => Math.floor(10000000 + Math.random() * 90000000));
+  const [distance, setDistance] = useState(2); // km - default
 
   const handleGps = () => {
     setAddressMode("gps");
@@ -61,11 +75,22 @@ const CheckoutModal = ({ open, onClose, cart, total }: Props) => {
     }
   };
 
-  const deliveryFee = 2.5;
-  const grandTotal = total + deliveryFee;
+  const getDeliveryFee = () => {
+    if (distance > deliveryConfig.maxKm) return null; // too far
+    if (deliveryConfig.mode === "per_km") {
+      return Math.round(distance * deliveryConfig.perKmRate * 100) / 100;
+    }
+    // tiers mode
+    const tier = deliveryConfig.tiers.find((t) => distance <= t.maxKm);
+    return tier ? tier.price : null;
+  };
+
+  const deliveryFee = getDeliveryFee();
+  const isTooFar = deliveryFee === null;
+  const grandTotal = total + (deliveryFee ?? 0);
 
   const address = addressMode === "gps" ? gpsAddress : manualAddress;
-  const isValid = name.trim() && phone.trim() && address.trim() && payment;
+  const isValid = name.trim() && phone.trim() && address.trim() && payment && !isTooFar;
 
   const handleSubmit = () => {
     if (!isValid) return;
@@ -229,7 +254,7 @@ const CheckoutModal = ({ open, onClose, cart, total }: Props) => {
                   </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>Frais de livraison</span>
-                    <span className="text-foreground font-semibold">{deliveryFee.toFixed(2)} €</span>
+                    <span className="text-foreground font-semibold">{deliveryFee?.toFixed(2)} €</span>
                   </div>
                   <div className="border-t border-dashed border-border pt-2 flex justify-between">
                     <span className="font-extrabold text-foreground">Total</span>
@@ -334,6 +359,57 @@ const CheckoutModal = ({ open, onClose, cart, total }: Props) => {
                   )}
                 </div>
 
+                {/* Distance selector */}
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-foreground">Distance de livraison</label>
+                  <div className="bg-muted/50 rounded-xl p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Distance estimée</span>
+                      <span className="text-sm font-bold text-foreground">{distance} km</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0.5}
+                      max={12}
+                      step={0.5}
+                      value={distance}
+                      onChange={(e) => setDistance(parseFloat(e.target.value))}
+                      className="w-full accent-[hsl(var(--primary))]"
+                    />
+                    <div className="flex justify-between text-[10px] text-muted-foreground">
+                      <span>0.5 km</span>
+                      <span>Max: {deliveryConfig.maxKm} km</span>
+                      <span>12 km</span>
+                    </div>
+                    {isTooFar ? (
+                      <div className="bg-destructive/10 text-destructive text-xs font-semibold rounded-lg px-3 py-2 text-center">
+                        ❌ Distance trop éloignée (max {deliveryConfig.maxKm} km). Livraison non disponible.
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Frais de livraison</span>
+                        <span className="font-bold text-primary">{deliveryFee?.toFixed(2)} €</span>
+                      </div>
+                    )}
+                    {/* Show tier info */}
+                    {deliveryConfig.mode === "tiers" && (
+                      <div className="space-y-1 border-t border-border pt-2">
+                        <p className="text-[10px] text-muted-foreground font-semibold">Tarifs par zone :</p>
+                        {deliveryConfig.tiers.map((tier, i) => (
+                          <div key={i} className="flex justify-between text-[10px] text-muted-foreground">
+                            <span>≤ {tier.maxKm} km</span>
+                            <span className="font-semibold text-foreground">{tier.price.toFixed(2)} €</span>
+                          </div>
+                        ))}
+                        <div className="flex justify-between text-[10px] text-destructive">
+                          <span>&gt; {deliveryConfig.maxKm} km</span>
+                          <span className="font-semibold">Non disponible</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 {/* Extra info */}
                 <div className="space-y-1.5">
                   <label className="text-sm font-bold text-foreground">Informations supplémentaires</label>
@@ -402,8 +478,10 @@ const CheckoutModal = ({ open, onClose, cart, total }: Props) => {
                       <span className="font-semibold text-foreground">{total.toFixed(2)} €</span>
                     </div>
                     <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>🚚 Frais de livraison</span>
-                      <span className="font-semibold text-foreground">{deliveryFee.toFixed(2)} €</span>
+                      <span>🚚 Frais de livraison ({distance} km)</span>
+                      <span className="font-semibold text-foreground">
+                        {isTooFar ? "—" : `${deliveryFee?.toFixed(2)} €`}
+                      </span>
                     </div>
                     <div className="border-t border-border pt-2 flex justify-between">
                       <span className="font-extrabold text-foreground">Total</span>

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Plus, Minus, ShoppingBag, X, Check, ChevronRight, Star, Clock, Info, Heart, MapPin } from "lucide-react";
+import { ArrowLeft, Plus, Minus, ShoppingBag, X, Check, ChevronRight, Star, Clock, Info, MapPin, Users, ExternalLink } from "lucide-react";
 import CheckoutModal from "@/components/demo/CheckoutModal";
+import RestaurantInfoModal from "@/components/demo/RestaurantInfoModal";
 import { Link } from "react-router-dom";
 import demoCover from "@/assets/demo-cover.jpg";
 
@@ -106,6 +107,11 @@ const Demo = () => {
   const [showCart, setShowCart] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+
+  // Demo queue data
+  const queueOrders = 3;
+  const queueWaitMin = 15;
 
   const openProduct = (p: Product) => {
     setSelectedProduct(p);
@@ -186,6 +192,13 @@ const Demo = () => {
               </div>
             </div>
           </div>
+          {/* Queue info */}
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border">
+            <Users className="w-3.5 h-3.5 text-primary" />
+            <span className="text-xs font-semibold text-foreground">{queueOrders} commandes en cours</span>
+            <span className="text-xs text-muted-foreground">· ~{queueWaitMin} min d'attente</span>
+          </div>
+
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
             <div className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-green-600" />
@@ -193,12 +206,22 @@ const Demo = () => {
               <span className="text-xs text-muted-foreground">· 11:00 - 23:00</span>
             </div>
             <div className="flex items-center gap-2">
-              <button className="flex items-center gap-1.5 border border-border rounded-full px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors">
+              <button
+                onClick={() => setShowInfo(true)}
+                className="flex items-center gap-1.5 border border-border rounded-full px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+              >
                 <Info className="w-3.5 h-3.5" /> Plus d'infos
               </button>
-              <button className="w-8 h-8 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors">
-                <Heart className="w-4 h-4 text-muted-foreground" />
-              </button>
+              <a
+                href="https://g.page/r/istanbul-kebab/review"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-border text-xs font-medium text-foreground hover:bg-muted transition-colors"
+              >
+                <Star className="w-3.5 h-3.5 text-primary fill-primary" />
+                Avis
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
           </div>
         </div>
@@ -465,6 +488,9 @@ const Demo = () => {
         total={cartTotal}
       />
     </div>
+
+      {/* Restaurant info modal */}
+      <RestaurantInfoModal open={showInfo} onClose={() => setShowInfo(false)} />
             </motion.div>
           </motion.div>
         )}
